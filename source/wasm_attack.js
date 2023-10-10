@@ -1950,6 +1950,9 @@ var ___wasm_call_ctors = Module["___wasm_call_ctors"] = createExportWrapper("__w
 var _main = Module["_main"] = createExportWrapper("main");
 
 /** @type {function(...*):?} */
+var _dead_code = Module["_dead_code"] = createExportWrapper("dead_code");
+
+/** @type {function(...*):?} */
 var ___errno_location = Module["___errno_location"] = createExportWrapper("__errno_location");
 
 /** @type {function(...*):?} */
