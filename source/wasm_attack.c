@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 
-enum attack_types   {STACK_OVERFLOW=100, INDIRECT_CALL};
+enum attack_types   {STACK_OVERFLOW=100, INDIRECT_CALL, RODATA_OVERWRITE};
 enum functions      {MEMCPY=200, STRCPY, STRNCPY};
 
-size_t num_of_attack_types = 2;
-char *attack_types[] = {"stackoverflow", "indirectcall"};
+size_t num_of_attack_types = 3;
+char *attack_types[] = {"stackoverflow", "indirectcall", "rodataoverwrite"};
 
 size_t num_of_functions = 3;
 char *functions[] = {"memcpy", "strcpy", "strncpy"};
@@ -19,11 +19,15 @@ struct attack_form {
 static ATTACK_FORM attack;
 static char *stack_overflow_payload = "AAAAAAAAAAAAAAAAAAAAAAAAA";
 
-//use this payload when using printf for debugging (line 118, 120)
-//static char *indirect_call_payload = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\02";
+//use this payload when using printf for debugging (line 138, 140)
+//static char *indirect_call_payload = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\02";
 
-//use this payload when not using printf for debugging (line 118, 120)
-static char *indirect_call_payload = "aaaaaaaaaaaa\02";
+//use this payload when not using printf for debugging (line 138, 140)
+static char *indirect_call_payload = "aaaaaaaaaaaaaaaaaaaaaaaaaaaa\02";
+
+char *global_const = "AAAA";
+static const char *rodata_const = "Rodata constant overwrite failed!";
+static char *rodata_overwrite_payload = "aaaaaaaaaaaaaaRodata constant overwrite succeeded!\0";
 static int is_error = 0;
 
 void evil(int unused) { printf("Indirect call redirection succeeded!\n"); }
@@ -49,12 +53,28 @@ void indirect_vulnerable(enum functions function) {
   }
 }
 
+__attribute__((noinline)) 
+void rodata_vulnerable(enum functions function) {
+  if(function == MEMCPY) {
+    memcpy(global_const, rodata_overwrite_payload, strlen(rodata_overwrite_payload));
+  }
+  else if(function == STRCPY) {
+    strcpy(global_const, rodata_overwrite_payload);
+  }
+  else if(function == STRNCPY) {
+    strncpy(global_const, rodata_overwrite_payload, strlen(rodata_overwrite_payload));
+  }
+}
+
 void set_attack(char* choice) {
     if(strcmp(choice, attack_types[0]) == 0) {
         attack.attack_type = STACK_OVERFLOW;
     }
     else if(strcmp(choice, attack_types[1]) == 0) {
         attack.attack_type = INDIRECT_CALL;
+    }
+    else if(strcmp(choice, attack_types[2]) == 0) {
+        attack.attack_type = RODATA_OVERWRITE;
     }
     else {
         printf("Error: Unknown choice of attack type \"%s\"\n", choice);
@@ -120,6 +140,11 @@ int main(int argc, char **argv) {
         //printf("&func_ptr: %p\nfunc_ptr:  %p\n", &func_ptr, func_ptr);
 
         (*func_ptr)("aaaa");
+    }
+
+    else if(attack.attack_type == RODATA_OVERWRITE) {
+        rodata_vulnerable(attack.function);
+        printf("%s", rodata_const);
     }
 
   return 0;
