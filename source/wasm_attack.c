@@ -29,6 +29,7 @@ char *global_const = "AAAA";
 static const char *rodata_const = "Rodata constant overwrite failed!";
 static char *rodata_overwrite_payload = "aaaaaaaaaaaaaaRodata constant overwrite succeeded!\0";
 static int is_error = 0;
+static int is_first = 1;
 
 void evil(int unused) { printf("Indirect call redirection succeeded!\n"); }
 void normal(char *unused) { printf("Indirect call redirection failed!\n"); }
@@ -100,8 +101,14 @@ void set_function(char* choice) {
 
 
 int main(int argc, char **argv) {
+    if(is_first == 1) {
+        is_first = 0;
+        return 0;
+    }
+    
     set_attack(argv[1]);
     set_function(argv[2]);
+
 
     if(is_error == 1) {
         is_error = 0;
