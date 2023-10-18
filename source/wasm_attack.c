@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
         is_first = 0;
         return 0;
     }
-    
+
     set_attack(argv[1]);
     set_function(argv[2]);
 
