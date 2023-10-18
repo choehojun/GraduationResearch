@@ -19,11 +19,11 @@ struct attack_form {
 static ATTACK_FORM attack;
 static char *stack_overflow_payload = "AAAAAAAAAAAAAAAAAAAAAAAAA";
 
-//use this payload when using printf for debugging (line 138, 140)
-//static char *indirect_call_payload = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\02";
+//use this payload when using printf for debugging (line 145, 147)
+//static char *indirect_call_payload = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\02";
 
-//use this payload when not using printf for debugging (line 138, 140)
-static char *indirect_call_payload = "aaaaaaaaaaaaaaaaaaaaaaaaaaaa\02";
+//use this payload when not using printf for debugging (line 145, 147)
+static char *indirect_call_payload = "aaaaaaaaaaaa\02";
 
 char *global_const = "AAAA";
 static const char *rodata_const = "Rodata constant overwrite failed!";
@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
 
     else if(attack.attack_type == RODATA_OVERWRITE) {
         rodata_vulnerable(attack.function);
-        printf("%s", rodata_const);
+        puts(rodata_const);
     }
 
   return 0;
