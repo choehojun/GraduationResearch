@@ -1,7 +1,7 @@
 # WASM-RIPE: Runtime Intrusion Prevention Evaluator for WebAssembly
 This repository provides an early version of WASM-RIPE, a tool for WebAssembly security benchmarking.
 
-Since attacks on WebAssembly files are completely different from attacks on native C files, WASM-RIPE completely reconstructed the attacks of the existing RIPE[https://github.com/johnwilander/RIPE] to create new attack codes.
+Since attacks on WebAssembly files are completely different from attacks on native C files, WASM-RIPE completely reconstructed the attacks of the existing [RIPE](https://github.com/johnwilander/RIPE) to create new attack codes.
 
 Since this tool is still an early version, it has been implemented for only three attacks: stack overflow, indirect call redirection, and rodata constant overwrite.
 
